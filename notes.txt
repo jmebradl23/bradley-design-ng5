@@ -1,0 +1,1020 @@
+******************
+**INITIAL SET-UP**
+******************
+
+Step 1.1: Be sure to use Node version 8.
+
+Step 1.2: Create your root directory
+
+Step 1.3: Initialize Node: 
+    $ npm init
+
+Step 1.4: Install and save Express, Body Parser and Nodemon and add to server.js file
+    $ npm install --save express nodemon body-parser
+    var express = require('express');
+    var bodyParser = require('body-parser');
+    var app = express();
+    ...
+    app.use(bodyParser.json());
+
+Step 1.5: Create server file
+    $ touch server.js
+
+Step 1.6: Set up server with root route
+    var express = require('express');
+    var bodyParser = require('body-parser');
+    var app = express();
+
+    app.use(bodyParser.text());
+
+    app.get('/', (req, res) => {
+        console.log('Server is listening');
+        res.send('Welcome to your server! It is good.');
+    });
+
+    app.listen(process.env.PORT || 3000), function () {
+    console.log("SERVER RUNNING");
+  };
+
+Step 1.7: Start server
+    $ nodemon server.js
+
+Step 1.8: Globally install angular-cli (it it's not already)
+    $ npm install -g @angular/cli
+
+Step 1.9: Go to the root of the project and create a frontend directory
+    $ ng new frontend
+
+Step 1.10: Inside the frontend directory, start the server for the frontend
+    $ ng server
+
+Step 1.11: In the src/app directory, create directories for your services and components
+    $ mkdir services components
+
+Step 1.12: Install cors as middleware to work between frontend and backend
+    $ npm install --save cors
+
+Step 1.13: Add cors to your server.js file
+    ...
+    var cors = require('cors');
+    var app = express();
+    
+    app.use(cors());
+
+***********
+**ROUTING**
+***********
+
+Step 2.1: Create a new component that will be used as a new route (or as a component that will call a service) using angular-cli.
+    $ cd src/app/components
+    $ ng g c <name>
+
+Step 2.2: Reference your new route inside your server.js file.
+    const routes = [
+        {path: "register", component:RegisterComponent}
+    ];
+    ...
+
+Step 2.3 Add RouterModule to the app in server.js file.
+    ...
+    import { RouterModule } from '@angular/router';
+    ...
+    imports: [
+        BrowserModule,
+        HttpModule,
+        MatButtonModule,
+        MatToolbarModule,
+        RouterModule.forRoot(routes)
+    ],
+    ...
+
+Step 2.4: Define and add router outlet to the app.component.html file.
+    <router-outlet></router-outlet>
+
+************
+**SERVICES**
+************
+Step 4.1: Create a service using angular-cli
+    (inside the src/app/services directory) 
+    $ ng generate service [name]
+    
+Step 4.2: Inject Http from angular into your service
+    import { Injectable } from '@angular/core';
+    import {Http} from '@angular/http';
+    ...
+    constructor(private http: Http) { }
+    ...
+    
+Step 4.3: Create a get request function in your service to retrieve data from your server (for now)
+    ...
+    getMessage() {
+        this.http.get('http://localhost:3000/comments').subscribe(res => {
+        console.log(res);
+        })
+    }
+    ...
+
+Step 4.4: Create a route in your backend server (server.js) to accept the route you just created ('http://localhost:3000/posts'), and return data as a response
+    ...
+    app.get('/comments', (req, res) => {
+        res.send({message:'hello world',greeting:'Bonjour monde'});
+    });
+    ...
+
+Step 4.5: Declare your service as a dependency in app.module.ts so it can be used in components. Also inject whatever http request module you're using.
+    ...
+    import { ApiService } from './services/api.service';
+    import { HttpModule } from '@angular/http';
+    ...
+    imports: [
+        BrowserModule,
+        HttpModule
+    ],
+    ...
+    providers: [ApiService],
+    ...
+Step 4.6: Add the service to your component
+    ...
+    import { ApiService } from './services/api.service';
+    ...
+    constructor(private apiService: ApiService) {}
+  
+    ngOnInit() {
+        this.apiService.getMessage();
+    }
+
+Step 4.9: Create a new form and bind the inputs in the .html files to variables in the .ts files.
+    .ts file:
+    export class RegisterComponent implements OnInit {
+        registerData = {};
+    ...
+
+    .html file:
+    <form class="example-form">
+        <mat-form-field class="example-full-width">
+            <input matInput [(ngModel)]="registerData.email" placeholder="Email" type="text" name="email">
+        </mat-form-field>
+
+        <mat-form-field class="example-full-width">
+            <input matInput [(ngModel)]="registerData.password" placeholder="Password" type="password" name="password">
+        </mat-form-field>
+        <button mat-raised-button>Register</button>
+    </form>
+
+Step 4.10: Import FormsModule to the app.module.ts file.
+    ...
+    import { FormsModule } from '@angular/forms';
+    ...
+    imports: [
+    BrowserModule,
+    HttpModule,
+    MatButtonModule,
+    MatToolbarModule,
+    MatInputModule,
+    BrowserAnimationsModule,
+    FormsModule,
+    ...
+
+Step 4.11: In the .ts file, create a function to log the user data after it is submitted in the form. In the .html file, bind the function to the button.
+    .ts file:
+    ...
+    registerData = {};
+
+    const = postNewUser => {
+        console.log(this.registerData);
+    }
+    ...
+
+    .html file:
+    ...
+        <button mat-raised-button (click)="postNewUser()">Register</button>
+    </form>
+    ...
+
+Step 4.12: Create a post request method in the service.ts file
+    ...
+    addNewUser(userData) {
+        this.http.post('http://localhost:3000/register', userData).subscribe(res => {
+        console.log(res);
+        })
+    }
+    ...
+
+Step 4.13: In the component where you want to call the service, import the service and add it to the constructor.
+    ...
+    import {ApiService} from '../../services/api.service';
+    ...
+    registerData = {};
+
+    constructor(private apiService: ApiService) {}
+    ...
+
+Step 4.14: In the component.ts file, update the post method to call the post method in the service.
+    ...
+    logRegisterData () {
+        // console.log(this.registerData);
+        this.apiService.addNewUser(this.registerData);
+    }
+    ...
+
+*********
+**MONGO**
+*********
+
+Step 3.1: Create a route in your backend server (server.js) to accept a post request, and return data as a response.
+    app.post('/register', (req, res) => {
+        res.send(res.statusCode);
+    });
+
+Step 3.2: Test on Postman app to confirm you can get a statusCode when making a post request to this route. Body should show up in terminal and status should be listed on Postman.
+    POST> http://localhost:3000/register
+    Body: checked
+    Raw: checked
+    JSON (application/json): checked
+    Note: When sending json, you must use double-quotes with Postman!!!
+
+Step 3.3: Log into mLab.com and set up a new database.
+    Cloud Provider: AWS
+    Type: Sandbox
+    Region: US
+
+Step 3.4: Add a new database user to this account and save the username and password.
+
+Step 3.5:Download and install Mongoose (if you haven't already)
+    $ npm install --save mongoose
+
+Step 3.6: Add mongoose to your server.js file
+    ...
+    var mongoose = require('mongoose');
+    ...
+    mongoose.connect('mongodb://<dbuser>:<dbpassword>@ds257640.mlab.com:57640/meanstack-test
+');
+
+Step 3.7: Change the <dbuser> and <dbpassword> to the credentials you just created in step 3.4.
+
+Step 3.8: Add error catching code to mongo.connect
+    mongoose.connect('mongodb://meanstack-test-user:meanstack-test23@ds257640.mlab.com:57640/meanstack-test', err => {
+        if(!err) {
+            console.log('Connected to Database!');
+        } else {
+            console.log('Error is: ', err);
+        }
+    });
+
+Step 3.9: Create a new 'models' directory in your backend folder and inside, create a new 'user' model for your database.
+    >backend
+        >models
+            >user.js
+
+Step 3.10: Set up your new model.
+    var mongoose = require('mongoose');
+
+    module.exports = mongoose.model('User', {
+        email: String,
+        password: String
+    })
+
+Step 3.11: Require your new model in the server.js file.
+    var User = require('./models/user.js');
+
+Step 3.12: In the server.js file, update the post request to use the new model.
+    ...
+    app.post('/register', (req, res) => {
+        let userData = req.body;
+        let user = new User(userData);
+
+        user.save((err, result) => {
+            if(err) {
+                console.log('There is an error saving new user');
+            } else {
+                res.sendStatus(200);
+            }
+        })
+    });
+    ...
+
+Step 3.13: Using Postman, create a new post request to send data to your new mLabs database.
+
+Step 3.14: Install bcrypt to hash the user password.
+    $ npm install --save bcrypt-nodejs
+
+Step 3.15: Update user.js model to hash the user password.
+    var mongoose = require('mongoose');
+    var bcrypt = require('bcrypt-nodejs');
+
+    var userSchema = new mongoose.Schema({
+        email: String,
+        password: String,
+        name: String,
+        description: String
+    })
+
+    userSchema.pre('save', function (next) {
+        var user = this
+
+        if(!user.isModified('password'))
+        return next()
+
+        bcrypt.hash(user.password, null, null, (err, hash) => {
+            if(err) return next(err)
+            user.password = hash
+            next()
+        })
+    })
+    module.exports = mongoose.model('User', userSchema)
+
+Step 3.16: Update server.js code to check hashed passwords instead of string passwords.
+
+
+
+
+
+
+
+
+
+
+******************
+**AUTHENTICATION**
+******************
+Step 5.1: Create a route in the server.js file to login a user.
+    app.post('/login', async (req, res) => {
+        let userData = req.body;
+        let user = await User.findOne({email: userData.email});
+        if(!user){
+            return res.status(401).send({message: "Email is not found"})
+        } else if (userData.password != user.password) {
+            return res.status(401).send({message: "Password is incorrect"});
+        } else {
+            res.sendStatus(200);
+        }
+    });
+
+Step 5.2: Create a token to be mapped to the database in order to save the logged in user. To do so we need to install jwt-simple.
+    $ npm install --save jwt-simple
+
+Step 5.3: Add jwt-simple to your server.
+    var jwt = require('jwt-simple');
+
+Step 5.4: Create a token with a payload in your server.
+    app.post('/login', async (req, res) => {
+        ...
+        let payload = {};
+
+        // When creating a token, the first argument is your payload and the second is the key (which you don't want to list in your application. It should be hidden and set dynamically. But we are hard coding it for quick purposes.)
+        let token = jwt.encode(payload, '123456')
+        console.log('user logged in')
+        res.status(200).send({token});
+        }
+    });
+    ...
+
+Step 5.5: Set up a login POST method in your service, and then test login on the UI to confirm token is logged in the console.
+    loginUser(loginData) {
+        console.log(loginData);
+        this.http.post('http://localhost:3000/login', loginData).subscribe(res => {
+        console.log(res);
+        })
+    }
+
+Step 5.6: Save the returned token in local storage in the login POST method.
+    ...
+    localStorage.setItem('token', res.json().token);
+    ...
+
+********************************
+**GETTING AND DISPLAYING USERS**
+********************************
+
+Step 6.1: Create an endpoint to get all users in the server.
+    app.get('/users', async(req, res) => {
+        try {
+            let users = await User.find({}, '-password -__v');
+            res.send(users);
+        } catch (error) {
+            console.log(error);
+            res.sendStatus(500);
+        }
+    });
+
+Step 6.2: Create a users component.
+    $ ng g c users
+
+Step 6.3: Update the users component to get and save all users.
+    import { Component, OnInit } from '@angular/core';
+    import {ApiService} from '../../services/api.service';
+
+    @Component({
+    selector: 'app-users',
+    templateUrl: './users.component.html',
+    styleUrls: ['./users.component.css']
+    })
+    export class UsersComponent implements OnInit {
+    registerData = {};
+
+    constructor(private apiService: ApiService) {}
+
+    ngOnInit() {
+        this.apiService.getUsers();
+    }
+
+    }
+
+Step 6.4: Update the Service to grab all users.
+    ...
+    constructor(private http: Http) { }
+
+    users = [];
+
+    getUsers() {
+        this.http.get('http://localhost:3000/users').subscribe(res => {
+        this.users = res.json();
+        })
+    }
+    ...
+
+Step 6.5: Add your html to show a list of emails.
+    <div *ngFor="let user of apiService.users">
+        <mat-card>{{user.email}}</mat-card>
+    </div>
+
+Step 6.6: 
+    Make sure to add your new component to the app.module file and add the new route.
+    (Adding route)
+    ...
+    const routes = [
+    {path: "register", component:RegisterComponent},
+    {path: "login", component:LoginComponent},
+    {path: "users", component:UsersComponent}
+    ];
+    ...
+
+Step 6.7: To add ability to click on email and go to users profile, first add a new path to the app.module file.
+    ...
+    {path:'profile/:id', component:UsersComponent}
+    ...
+
+Step 6.8: Update the html in users.component file to add router-link to each email.
+    ...
+    <mat-card [routerLink]="['/profile', user._id]">{{user.email}}</mat-card>
+    ...
+
+Step 6.9: Create a new route for the users/:id page in your server.
+    app.get('/profile/:id', async(req, res) => {
+        try {
+            let user = await User.findById(req.params.id, '-password -__v');
+            res.send(user);
+        } catch (error) {
+            console.log(error);
+            res.sendStatus(500);
+        }
+    });
+
+Step 6.10: Create a new user profile component
+    $ng g c profile
+
+Step 6.11: Set up your new component.
+    import { Component, OnInit } from '@angular/core';
+    import {ApiService} from '../../services/api.service';
+
+    @Component({
+    selector: 'app-profile',
+    templateUrl: './profile.component.html',
+    styleUrls: ['./profile.component.css']
+    })
+    export class ProfileComponent implements OnInit {
+
+    constructor(private apiService: ApiService) { }
+
+    ngOnInit() {
+    }
+
+    }
+
+Step 6.12: Set up your component's html.
+    <mat-card>
+    <mat-card-header>
+        <mat-card-title>
+        <h3>Profile</h3>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        
+    </mat-card-content>
+    </mat-card>
+
+Step 6.13: Update the new path to your app.module file.
+    ...
+    {path: "profile/:id", component:ProfileComponent}
+    ...
+
+Step 6.14: Update component.ts file to grab profile information.
+    import { Component, OnInit } from '@angular/core';
+    import {ApiService} from '../../services/api.service';
+    import { ActivatedRoute } from '@angular/router';
+
+    @Component({
+    selector: 'app-profile',
+    templateUrl: './profile.component.html',
+    styleUrls: ['./profile.component.css']
+    })
+    export class ProfileComponent implements OnInit {
+
+    constructor(private apiService: ApiService, private route: ActivatedRoute) { }
+
+    profile = {};
+
+    ngOnInit() {
+        let id = this.route.snapshot.params.id;
+        this.apiService.getProfile(id).subscribe(data => this.profile = data.json())
+    }
+
+    }
+
+Step 6.15: Update api to add new profile get request.
+    getProfile(id) {
+        return this.http.get('http://localhost:3000/profile/' + id)
+    }
+
+Step 6.16: Update html to list all info.
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>
+            <h3>Profile</h3>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-list>
+            <mat-list-item>Email: {{profile.email}}</mat-list-item>
+            <mat-list-item>User Id: {{profile._id}}</mat-list-item>
+            <mat-list-item>User Id: {{profile.name}}</mat-list-item>
+            <mat-list-item>User Id: {{profile.description}}</mat-list-item>
+            </mat-list>
+        </mat-card-content>
+    </mat-card>
+
+******************
+**ATHORIZATION**
+******************
+
+STEP 7.1: Create a auth.js module in the backend to hold all Authorization code.
+
+STEP 7.2: Transfer code from the server to auth.js module.
+    module.exports = {
+        register: (req, res) => {
+            let userData = req.body;
+            let user = new User(userData);
+        
+            user.save((err, result) => {
+                if(err) {
+                    console.log('There is an error saving new user');
+                } else {
+                    res.sendStatus(200);
+                }
+            })
+        },
+
+        login: async (req, res) => {
+            let userData = req.body;
+            let user = await User.findOne({email: userData.email});
+
+            if(!user){
+                return res.status(401).send({message: "Email is not found"})
+            }
+            
+            bcrypt.compare(userData.password, user.password, (err, isMatch) => {
+                if(!isMatch) {
+                    return res.status(401).send({message: 'Email or password invalid'})
+                }
+        
+                let payload = {};
+        
+                // When creating a token, the first argument is your payload and the second is the key (which you don't want to list in your application. It should be hidden and set dynamically. But we are hard coding it for quick purposes.)
+                let token = jwt.encode(payload, '123456')
+                console.log('user logged in')
+                res.status(200).send({token});
+            })
+        }
+    }
+
+STEP 7.3: Be sure to import all appropriate modules in the server and auth files.
+    auth.js:
+    var jwt = require('jwt-simple');
+    var bcrypt = require('bcrypt-nodejs');
+    var User = require('./models/user.js');
+
+    server.js:
+    // var jwt = require('jwt-simple');
+    // var bcrypt = require('bcrypt-nodejs');
+    var auth = require('./auth');
+
+STEP 7.4: Add an express router to the auth module.
+    var jwt = require('jwt-simple');
+    var bcrypt = require('bcrypt-nodejs');
+    var User = require('./models/user.js');
+    var router = express.Router();
+
+    // module.exports = {
+        router.post('/register', (req, res) => {
+            let userData = req.body;
+            let user = new User(userData);
+
+            user.save((err, result) => {
+                if(err) {
+                    console.log('There is an error saving new user');
+                } else {
+                    res.sendStatus(200);
+                }
+            })
+        }),
+
+        router.post('/login', async (req, res) => {
+            let userData = req.body;
+            let user = await User.findOne({email: userData.email});
+
+            if(!user){
+                return res.status(401).send({message: "Email is not found"})
+            }
+            
+            bcrypt.compare(userData.password, user.password, (err, isMatch) => {
+                if(!isMatch) {
+                    return res.status(401).send({message: 'Email or password invalid'})
+                }
+        
+                let payload = {};
+        
+                // When creating a token, the first argument is your payload and the second is the key (which you don't want to list in your application. It should be hidden and set dynamically. But we are hard coding it for quick purposes.)
+                let token = jwt.encode(payload, '123456')
+                console.log('user logged in')
+                res.status(200).send({token});
+            })
+        })
+    // }
+        module.exports = router
+
+STEP 7.5: Update server file:
+    ...
+    app.use('/auth', auth);
+
+    app.listen(process.env.PORT || 3000), function () {
+        console.log("SERVER RUNNING");
+    };
+
+STEP 7.6: Define a path and update it in the service
+    ...
+    authPath='http://localhost:3000/auth';
+
+    getUsers() {
+        this.http.get('http://localhost:3000/users').subscribe(res => {
+        this.users = res.json();
+        })
+    }
+
+    getProfile(id) {
+        return this.http.get('http://localhost:3000/profile/' + id)
+    }
+
+    getMessage() {
+        this.http.get('http://localhost:3000/posts').subscribe(res => {
+        console.log(res);
+        })
+    }
+
+    addNewUser(userData) {
+        console.log(userData);
+        this.http.post(this.authPath + '/register', userData).subscribe(res => {
+        console.log(res);
+        })
+    }
+
+    loginUser(loginData) {
+        console.log(loginData);
+        this.http.post(this.authPath + '/login', loginData).subscribe(res => {
+        console.log(res);
+        localStorage.setItem('token', res.json().token);
+        })
+    }
+
+    }
+***************************
+**CREATING A USER MESSAGE**
+***************************
+STEP 8.1: In your models directory, create a new model for posts.
+    var mongoose = require('mongoose');
+
+    module.exports = mongoose.model('post', {
+        msg: String
+    })
+
+STEP 8.2: Require your new model in the server.
+    var Post = require('./models/post.js');
+
+STEP 8.3: In your server, create a message post request route.
+    app.post('/post', (req, res) => {
+        var post = new Post(req.body);
+
+        post.save((err, result) => {
+            if(err){
+                console.error('Saving post error');
+                return res.status(500).send({message: 'Saving post causing an error'});
+            }
+            res.sendStatus(200);
+        })
+    })
+
+STEP 8.4: Set up a route to add a new post in your service.
+    postMessage(message) {
+        this.http.post(this.path + 'post', message).subscribe(res => {
+        console.log(res);
+        })
+    }
+
+STEP 8.5: Add a new post component.
+    $ ng g c post
+
+STEP 8.6: Set up the html and ts files for new component.
+    html:
+    <h1>Add a Post</h1>
+    <mat-card>
+    <mat-card-content>
+        <form class="example-form">
+        <mat-form-field style="width: 100%">
+            <textarea matInput [(ngModel)]="postMsg" name="description" placeholder="post"></textarea>
+        </mat-form-field>
+        <button mat-raised-button (click)="post()" color="primary">POST</button>
+        </form>
+    </mat-card-content>
+    </mat-card>
+
+    js: 
+    import { Component, OnInit } from '@angular/core';
+    import {ApiService} from '../../services/api.service';
+
+    @Component({
+    selector: 'app-post',
+    templateUrl: './post.component.html',
+    styleUrls: ['./post.component.css']
+    })
+    export class PostComponent implements OnInit {
+
+    constructor(private apiService: ApiService) { }
+
+    postMsg = ''
+
+    post() {
+        console.log(this.postMsg)
+    }
+
+    ngOnInit() {
+    }
+
+    }
+
+STEP 8.7: Add the new path to your app.module.
+    ...
+    {path: "post", component:PostComponent}
+    ...
+
+STEP 8.8: Update post method in your component.
+    post() {
+        this.apiService.postMessage({msg: this.postMsg})
+    }
+
+STEP 8.9: To associate a user with a post, we must update the post schema.
+    var mongoose = require('mongoose');
+
+    module.exports = mongoose.model('post', {
+        msg: String,
+        author: {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
+    })
+
+STEP 8.10: Update the server post method to associate a post with a server in the post method.
+    ...
+    app.post('/post', (req, res) => {
+
+        // Hard coding a author to every post for the time being
+        var postData = req.body
+        postData.author = '5b36a86e6dfb3f50b0a4399b'
+
+        var post = new Post(req.body);
+
+        post.save((err, result) => {
+    ...
+
+STEP 8.11: Add a getPosts method in your server to get all posts from a specified user.
+    ...
+    app.get('/posts/:id', async(req, res) => {
+        var author = req.params.id;
+        var posts = await Post.find({author})
+        res.send(posts)
+    });
+    ...
+
+STEP 8.12: In the service add a userId to the getMessage method so you can specify which user you want all messages for.
+    ...
+    messages = []
+    users = []
+
+    path='http://localhost:3000/';
+    authPath='http://localhost:3000/auth';
+
+    getUsers() {
+        this.http.get(this.path + 'users').subscribe(res => {
+        this.users = res.json();
+        })
+    }
+
+    getProfile(id) {
+        return this.http.get(this.path + 'profile/' + id)
+    }
+
+    getMessage(id) {
+        this.http.get(this.path + 'posts/' + id).subscribe(res => {
+        this.messages = res.json();
+        })
+    }
+    ...
+
+STEP 8.13: Create a messages component:
+    import { Component, OnInit } from '@angular/core';
+    import {ApiService} from '../../services/api.service';
+    import { ActivatedRoute } from '@angular/router';
+
+    @Component({
+    selector: 'app-messages',
+    templateUrl: './messages.component.html',
+    styleUrls: ['./messages.component.css']
+    })
+    export class MessagesComponent implements OnInit {
+
+    constructor(private apiService: ApiService, private route: ActivatedRoute) { }
+
+    ngOnInit() {
+        let id = this.route.snapshot.params.id;
+        this.apiService.getMessage(id);
+    }
+
+    }
+
+STEP 8.14: Create your html for the messages component
+    <div *ngFor="let msg of apiService.messages">
+        <mat-card>{{msg.message}}</mat-card>
+    </div>
+
+STEP 8.15: Add the messages componenet to the profile html 
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>
+            <h3>Profile</h3>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-list>
+            <mat-list-item>Email: {{profile.email}}</mat-list-item>
+            <mat-list-item>User Id: {{profile._id}}</mat-list-item>
+            <mat-list-item>User Id: {{profile.name}}</mat-list-item>
+            <mat-list-item>User Id: {{profile.description}}</mat-list-item>
+            </mat-list>
+        </mat-card-content>
+    </mat-card>
+    <app-messages></app-messages>
+
+**************************
+**ADVANCE AUTHENTICATION**
+**************************
+
+STEP 9.1: In the auth file, add the user id to the payload.
+    ...
+    let payload = {sub: user._id};
+    ...
+
+STEP 9.2: In order to add an HTTP interceptor we first need to create a new file called authinterceptor.ts in the app directory
+    import { Injectable } from '@angular/core';
+    import {HttpInterceptor } from '@angular/common/http';
+
+    @Injectable()
+    export class Authinterceptor implements HttpInterceptor {
+        intercept(req, next) {
+            console.log(req);
+            return next.handle(req)
+        }
+    }
+
+STEP 9.3: Add the new interceptor to your app.module file.
+    ...
+    import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+    ...
+    import { Authinterceptor } from './interceptor/authinterceptor';
+    ...
+    providers: [ApiService, {
+    provide: HTTP_INTERCEPTORS, 
+    useClass: Authinterceptor,
+    multi: true}],
+    bootstrap: [AppComponent]
+    ...
+
+STEP 9.4: Verify you can view HTTP header when you click Users tab in your app.
+
+STEP 9.5: Update your interceptor to add a token.
+    import { Injectable } from '@angular/core';
+    import {HttpInterceptor } from '@angular/common/http';
+
+    @Injectable()
+    export class Authinterceptor implements HttpInterceptor {
+        intercept(req, next) {
+            var authRequest = req.clone({
+                headers: req.headers.set('Authorization', 'token' + 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1YjM2YTg2ZTZkZmIzZjUwYjBhNDM5OWIifQ.VYHggKdJtpx4hty9PVxpIu7A8L7EX6vDhza31AQu2gA')
+            })
+            return next.handle(authRequest)
+        }
+    }
+
+STEP 9.6: Verify you can see this token when you click on users. Go to your network tab, list 'All', and click "users". In the "headers" tab, go down to Request Headers and view the Authorization key value pair.
+
+STEP 9.7: Create a method in the service to determine if there is currently a user logged in.
+    ...
+    messages = []
+    users = []
+    TOKEN_KEY = 'token'
+    path='http://localhost:3000/';
+    authPath='http://localhost:3000/auth';
+
+    getUsers() {
+        this.http.get<any>(this.path + 'users').subscribe(res => {
+        this.users = res;
+        })
+    }
+
+    getProfile(id) {
+        return this.http.get(this.path + 'profile/' + id)
+    }
+
+    get token () {
+        return localStorage.getItem(this.TOKEN_KEY);
+    }
+
+    get isAuthenticated () {
+        return !!localStorage.getItem(this.TOKEN_KEY);
+    }
+    ...
+
+STEP 9.8: Update the html for the login/register/logout buttons.
+    ...
+    <button mat-button *ngIf="!apiService.isAuthenticated" routerLink="/register">Sign Up</button>
+    <button mat-button *ngIf="!apiService.isAuthenticated" routerLink="/login">Log In</button>
+    <button mat-button *ngIf="apiService.isAuthenticated" routerLink="/logout">Log Out</button>
+    ...
+
+STEP 9.9: Create a logout function in the service.
+    ...
+    logout () {
+        localStorage.removeItem(this.TOKEN_KEY);
+    }
+    ...
+
+STEP 9.10: Update the logout button in the navbar.
+    ...
+    <button mat-button *ngIf="apiService.isAuthenticated" (click)="apiService.logout()" routerLink="/logout">Log Out</button>
+    ...
+
+******************
+**UPGRADING HTTP**
+******************
+
+STEP 10.1: In app.module change Http to HttpClientModule.
+    ...
+    import { HttpClientModule } from '@angular/common/http';
+    // import { HttpModule } from '@angular/http';
+    ...
+    imports: [
+        BrowserModule,
+        // HttpModule,
+        HttpClientModule,
+    ...
+
+STEP 10.2: In service, change Http as an import and in the constructor to HttpClient.
+    ...
+    // import {Http} from '@angular/http';
+    import { HttpClient } from '@angular/common/http';
+
+    @Injectable()
+    export class ApiService {
+
+    constructor(private http: HttpClient) { }
+    ...
+
+STEP 10.3: Since HttpClient is already json, we can remove .json from our methods. We also have to add <any> type to the variables.
+    ...
+    this.http.get<any>(this.path + 'users').subscribe(res => {
+      this.users = res;
+    ...
+
+STEP 10.4: Remove .json from profile component.
+    ...
+    ngOnInit() {
+        let id = this.route.snapshot.params.id;
+        this.apiService.getProfile(id).subscribe(data => this.profile = data)
+    }
+
+    }
+

@@ -1,0 +1,10 @@
+<form class="example-form">
+  <div class="example-full-width">
+      <input [(ngModel)]="commentData.name" placeholder="Name" type="text" name="name">
+  </div>
+
+  <div class="example-full-width">
+      <input [(ngModel)]="commentData.comment" placeholder="Comment" type="text" name="comment">
+  </div>
+  <button (click)="postNewComment()">Save</button>
+</form>
