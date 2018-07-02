@@ -1,0 +1,22 @@
+<nav class="navbar navbar-toggleable-md navbar-light bg-dark fixed-top">
+  <a [routerLink]="['/']" class="navbar-brand">BRADLEY DESIGN</a>
+  <button class="navbar-toggler custom-toggler navbar-toggler-right d-md-none" type="button" (click)="isNavbarCollapsed = !isNavbarCollapsed" aria-controls="exCollapsingNavbar2" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div [ngbCollapse]="!isNavbarCollapsed" class="collapse navbar-collapse d-md-none" id="exCollapsingNavbar2">
+    <div class="navbar-nav mr-auto">
+      <ul>
+        <li *ngFor="let project of projects">
+            <a [routerLink]="['/projects', project.link]">{{project.title}}</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class=" d-none d-md-block">
+      <ul class="list-inline">
+          <li class="list-inline-item" *ngFor="let project of projects">
+              <a [routerLink]="['/projects', project.link]">{{project.title}}</a>
+          </li>
+      </ul>
+  </div>
+</nav>

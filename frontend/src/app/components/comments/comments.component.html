@@ -1,10 +1,12 @@
-<p>
-  comments works!
-</p>
-
-
+<div>
+    <app-comment [id]='id'></app-comment>
+</div>
+<!-- If statement in here to determine if comment is for this.project's page!!! -->
 <div *ngFor="let comment of bradleyService.comments">
-  <p>Name: {{comment.name}}</p>
-  <p>Comment: {{comment.comment}}</p>
-  <hr>
+  <div *ngIf="comment.project==id">
+    <p>Name: {{comment.name}}</p>
+    <p>Comment: {{comment.comment}}</p>
+    <p>Project: {{comment.project}}</p>
+    <hr>
+  </div>
 </div>

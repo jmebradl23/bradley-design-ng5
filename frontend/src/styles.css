@@ -1,1 +1,42 @@
 /* You can add global styles to this file, and also import other style files */
+/* You can add global styles to this file, and also import other style files */
+@import "~bootstrap/dist/css/bootstrap.css";
+
+body {
+    margin-top: 60px;
+}
+
+h1.section-title, h1.page-title {
+    font-weight: bold;
+    font-size: 52px;
+    color: #000;
+    text-align: center;
+}
+
+h2.project-title {
+    font-weight: bold;
+    font-size: 32px;
+    color: #000;
+    text-align: center;
+}
+
+p.hp-md-text {
+    font-size: 20px;
+    color: #000;
+    text-align: center;
+}
+
+p.hp-sm-text {
+    font-size: 16px;
+    color: #000;
+    text-align: center;
+}
+
+/* Margins and Spacing */
+.mt-40 {
+    margin-top: 40px;
+}
+
+.mt-60 {
+    margin-top: 40px;
+}

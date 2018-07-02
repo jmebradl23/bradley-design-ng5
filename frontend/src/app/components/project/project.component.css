@@ -1,0 +1,33 @@
+.project.even .proj-text, .project.odd .proj-carousel  {
+    order: 1; 
+}
+
+.project.even .proj-carousel, .project.odd .proj-text {
+    order: 2; 
+}
+
+.proj-carousel {
+    text-align: center;
+}
+
+ngb-carousel img {
+    width: 100%;
+    min-width: 325px;
+    max-width: 650px;
+}
+
+.carousel-item.active,
+.carousel-item-next,
+.carousel-item-prev {
+  display: block;
+}
+
+
+@media only screen and (max-width: 767px) {
+    .project.odd .proj-text {
+        order: 1; 
+    }
+    .project.odd .proj-carousel  {
+        order: 2; 
+    }
+}

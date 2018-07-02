@@ -1,0 +1,107 @@
+<app-navbar></app-navbar>
+<div class="main-page">
+    <!-- <img src={{fullImagePath}} />
+    <img [src]="fullImagePath"> -->
+    <section class="about">
+      <h1 class="section-title">Larry Bradley</h1>
+      <ul>
+        <li class="hp-md-text" *ngFor="let title of titles">{{title}}</li>
+      </ul>
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <div class="small-lbphoto">
+            </div>
+          </div>
+          <div class="col-sm-12 col-md-6 lb-about">
+            <p>Based in California's Napa Valley and specializing in one of a kind woodworking projects, Larry Bradley has been creating designs and making them come to fruition through his craftmanship talents for over 40 years.<br><br>
+            He has completed various projects located throughout the Napa Valley. Some notable companies he's worked with are:<br></p>
+            <ul>
+              <li><a href="http://www.charleskrug.com">Charles Krug Winery</a></li>
+              <li><a href="http://www.oliveoilsainthelena.com/">Napa Valley Olive Oil Manufacturing Co.</a></li>
+              <li><a href="https://www.facebook.com/sthelenajuniorwomen">St. Helena Junior Women's Club</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="projects">
+        <h1 class="section-title">Projects</h1>
+        <div class="container">
+          <div class="row">
+            <div class="col-xs-12 col-sm-6 flip-proj">
+              <div class="flip-container" ontouchstart="this.classList.toggle('hover');">
+                <a ui-sref="mailboxes" href="#/mailboxes">
+                  <div class="flipper">
+                    <div class="front">
+                      <p>Mailboxes</p>
+                      <div class="front-mailbox front-project"></div>
+                    </div>
+                    <div class="back back-project bkgd-blue text-ctr">
+                        <p>Do you want a mailbox that makes your neighbors say "Wow"? Tell us about a design you're imagining. Or if you'd like to have a mailbox that's modeled after your house, Larry can design it. Simply let him know of your idea and he'll have a design created for you in no time.<br><br>To see samples of other mailboxes, click here.</p>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 flip-proj">
+              <div class="flip-container" ontouchstart="this.classList.toggle('hover');">
+                <a ui-sref="birdhouses" href="#/birdhouses">
+                  <div class="flipper">
+                    <div class="front">
+                      <p>Birdhouses</p>
+                      <div class="front-birdhouse front-project"></div>
+                    </div>
+                    <div class="back back-project bkgd-blue text-ctr">
+                        <p>Larry loves building one of a kind, custom designed birdhouses. Simply show him a photo of what you'd like the the house to be modeled after and he'll be able to draw up 3D designs that will satisfy your needs and expectations.<br><br>Click here to see a couple examples of what he can build.</p>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="container">
+          <div class="row">
+            <div class="col-xs-12 col-sm-6 flip-proj">
+              <div class="flip-container" ontouchstart="this.classList.toggle('hover');">
+                <a ui-sref="minihouses" href="#/miniaturehouses">
+                  <div class="flipper">
+                    <div id="mailbox-proj-title" class="front">
+                      <p>Miniature<br>Houses</p>
+                      <div class="front-minihouses front-project"></div>
+                    </div>
+                    <div class="back back-project bkgd-blue text-ctr">
+                        <p>Whether he's taking pictures of them in Germany or designing one on his home computer, Larry has always had an interest in miniature houses - paying close attention to the intricate details of each model. Let him know of a design you're imaging whether it be for the garden or inside the home.<br><br>To see a sample miniature house, click here.</p>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 flip-proj">
+              <div class="flip-container" ontouchstart="this.classList.toggle('hover');">
+                <a ui-sref="pethouses" href="#/pethouses">
+                  <div class="flipper">
+                    <div class="front">
+                      <p>Pet Houses</p>
+                      <div class="front-pethouses front-project"></div>
+                    </div>
+                    <div class="back back-project bkgd-blue text-ctr">
+                        <p>Larry has built many housing units for his family's and friend's pets. From dog houses to 'cat castles', any and all pets are quick to call the new construction home.</p>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+    </section>
+    <section class="contact">
+      <h1 class="section-title">Contact</h1>
+      <p class="hp-sm-text">Do you have a project you'd like designed or built? <br><br>
+        Perhaps you have questions about an idea.<br><br>
+        Either way, to inquire please contact us by clicking <a href="mailto:shbocceman@sbcglobal.net">here</a>.
+      </p>
+    </section>
+  </div>
+  

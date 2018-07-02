@@ -16,6 +16,7 @@ export class BradleyService {
   addNewComment(commentData) {
     this.http.post('http://localhost:3000/comment', commentData).subscribe(res => {
     console.log(res);
+    this.getComments();
     })
 }
 
